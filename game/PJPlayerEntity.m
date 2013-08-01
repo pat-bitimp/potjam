@@ -2,25 +2,32 @@
 
 @implementation PJPlayerEntity
 - initWithGameState: (PJGameState*)state
+				  x: (int32_t)_x
+				  y: (int32_t)_y
+				  z: (uint8_t)_z
+			  width: (uint32_t)_width
+	         height: (uint32_t)_height
+	       rotation: (uint16_t)_angle
 {
-	self = [super initWithGameState: state];
+	self = [super initWithGameState: state
+				                  x: (int32_t)_x
+				                  y: (int32_t)_y
+				                  z: (uint8_t)_z
+			                  width: (uint32_t)_width
+	                         height: (uint32_t)_height
+	                       rotation: (uint16_t)_angle];
 
 	image = [PJImage imageForName: @"media/player"];
-	width = 64;
-	height = 64;
-	x = 100;
-	y = 100;
+
 	frame = 0;
 	isClickable = true;
-	angle = 45;
-
 
 	cpFloat radius = width/2;
 	cpFloat mass = 1;
 
 	// The moment of inertia is like mass for rotation
 	// Use the cpMomentFor*() functions to help you approximate it.
-	cpFloat moment = cpMomentForCircle(mass, 0, radius, cpvzero);
+	cpFloat moment = INFINITY; // cpMomentForCircle(mass, 0, radius, cpvzero);
 
 	// The cpSpaceAdd*() functions return the thing that you are adding.
 	// It's convenient to create and add an object in one line.
@@ -31,7 +38,7 @@
 	// You can create multiple collision shapes that point to the same body.
 	// They will all be attached to the body and move around to follow it.
 	cpShape *ballShape = cpSpaceAddShape(gameState.space, cpCircleShapeNew(ballBody, radius, cpvzero));
-	cpShapeSetFriction(ballShape, 0.7);
+	ballShape->u = 1.0f;
 
 	body = ballBody;
 
@@ -40,7 +47,10 @@
 
 - (void)preRender
 {
-	//of_log(@"prerender");
+	PJApplicationDelegate* app = (PJApplicationDelegate*)[[OFApplication sharedApplication] delegate];
+
+	PJPoint camera = {x - app.resolutionX / 2, y - app.resolutionY / 2};
+	gameState.camera = camera;
 }
 
 - (void)postRender

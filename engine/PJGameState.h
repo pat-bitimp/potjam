@@ -3,6 +3,8 @@
 #import <chipmunk/chipmunk.h>
 #import "PJEntity.h"
 
+@class PJEntity;
+
 typedef struct
 {
 	int32_t x;
@@ -16,6 +18,7 @@ typedef struct
 	int8_t backgroundColorR;
 	int8_t backgroundColorG;
 	int8_t backgroundColorB;
+	PJEntity* player;
 	cpSpace* space;
 	cpFloat timeStep;
 }
@@ -24,9 +27,10 @@ typedef struct
 @property int8_t backgroundColorR;
 @property int8_t backgroundColorG;
 @property int8_t backgroundColorB;
+@property (strong)PJEntity* player;
 @property cpSpace* space; 
 - (void)onMouseButtonDown;
 - (void)onMouseButtonUp;
-- (void)physicTick;
-- (void)logicTick;
+- (void)physicTickForTimeInterval: (double)time;
+- (void)logicTickForTimeInterval: (double)time;
 @end

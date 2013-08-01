@@ -38,14 +38,23 @@
 	stop = true;
 }
 
+- (void)updateWindowTitle
+{
+	OFString* str = [OFString stringWithFormat: @"%@ %d", PJGameName, fps];
+	SDL_SetWindowTitle(window, [str UTF8String]);
+}
+
 - (void)renderLoop
 {
 	OFString* oldError = [OFString string];
-	//uint32_t frametime;
+	OFDate* lastUpdate = [OFDate date];
 
+	OFDate* secondStart = [OFDate date];
+
+	int32_t frameCount;
 	while(!stop)
 	{
-		//frametime = SDL_GetTicks();
+		OFDate* now = [OFDate date];
 
 		SDL_SetRenderDrawColor(renderer, 
 			application.state.backgroundColorR, 
@@ -62,74 +71,14 @@
 			entities = [application.state.entities copy];	
 		}
 
-		[application.state physicTick];
-		[application.state logicTick];
+		[application.state physicTickForTimeInterval: 0.01];
+		[application.state logicTickForTimeInterval: 0.01];
 
 		SDL_Event e;
 
 		if (SDL_PollEvent(&e)) 
 		{
-			if (e.type == SDL_QUIT)
-				break;
-			else if (e.type == SDL_MOUSEMOTION)
-			{
-				mouseX = e.motion.x - application.state.camera.x;
-				mouseY = e.motion.y - application.state.camera.y;
-			}
-			else if (e.type == SDL_MOUSEBUTTONDOWN)
-			{
-				mouseX = e.motion.x - application.state.camera.x;
-				mouseY = e.motion.y - application.state.camera.y;
-
-				PJEntity* ent = [self getEntityUnderCursorFromCollection: entities needsToBeClickable: true];
-
-				if (ent != nil)
-					[ent onMouseButtonDown];
-				else
-					[application.state onMouseButtonDown];
-
-				of_log((OFConstantString*)[OFString stringWithFormat: @"buttondown x: %d y: %d", mouseX, mouseY]);
-			}
-			else if (e.type == SDL_MOUSEBUTTONUP)
-			{
-				mouseX = e.motion.x - application.state.camera.x;
-				mouseY = e.motion.y - application.state.camera.y;
-
-				PJEntity* ent = [self getEntityUnderCursorFromCollection: entities needsToBeClickable: true];
-
-				if (ent != nil)
-					[ent onMouseButtonUp];
-				else
-					[application.state onMouseButtonUp];
-
-				of_log((OFConstantString*)[OFString stringWithFormat: @"buttonup x: %d y: %d", mouseX, mouseY]);
-			}
-			else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_LEFT)
-			{
-				PJPoint newCamera = {application.state.camera.x - 10, application.state.camera.y};
-				mouseX += 10;
-				application.state.camera = newCamera;
-			}
-			else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_RIGHT)
-			{
-				PJPoint newCamera = {application.state.camera.x + 10, application.state.camera.y};
-				mouseX -= 10;
-				application.state.camera = newCamera;
-			}
-			else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_UP)
-			{
-				PJPoint newCamera = {application.state.camera.x, application.state.camera.y - 10};
-				mouseY += 10;
-				application.state.camera = newCamera;
-			}
-			else if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_DOWN)
-			{
-				PJPoint newCamera = {application.state.camera.x, application.state.camera.y + 10};
-				mouseY -= 10;
-				application.state.camera = newCamera;
-			}
-			else if (e.type == SDL_KEYUP &&  e.key.keysym.sym == SDLK_ESCAPE)
-				break;
+			[application.eventHandler handleEvent: e];
 		}
 
 		for(PJEntity* entity in entities)
@@ -149,8 +98,16 @@
 			oldError = newError;
 		}
 
-		//if (SDL_GetTicks () - frametime < minframetime)
-      	//	SDL_Delay(minframetime - (SDL_GetTicks () - frametime));
+		lastUpdate = [OFDate date];
+		frameCount++;
+
+		if ([[OFDate date] timeIntervalSinceDate: secondStart] >= 1.0)
+		{
+			fps = frameCount;
+			frameCount = 0;
+			[self updateWindowTitle];
+			secondStart = [OFDate date];
+		}
 	}
 
 	SDL_DestroyRenderer(renderer);

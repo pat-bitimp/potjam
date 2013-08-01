@@ -45,6 +45,18 @@ typedef enum {
 - (void)postRender;
 - (void)onMouseButtonDown;
 - (void)onMouseButtonUp;
-+ entityWithGameState: (PJGameState*)state;
-- initWithGameState: (PJGameState*)state;
++ entityWithGameState: (PJGameState*)state
+					x: (int32_t)_x
+					y: (int32_t)_y
+					z: (uint8_t)_z
+				width: (uint32_t)_width
+			   height: (uint32_t)_height
+			 rotation: (uint16_t)_angle;
+- initWithGameState: (PJGameState*)state
+				  x: (int32_t)_x
+				  y: (int32_t)_y
+				  z: (uint8_t)_z
+			  width: (uint32_t)_width
+	         height: (uint32_t)_height
+	       rotation: (uint16_t)_angle;
 @end

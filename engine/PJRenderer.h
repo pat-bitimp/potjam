@@ -5,7 +5,9 @@
 #import "PJGameState.h"
 #import "PJApplicationDelegate.h"
 #import "PJImage.h"
+#import "../config.h"
 @class PJApplicationDelegate;
+@class PJEntity;
 
 @interface PJRenderer : OFObject
 {
@@ -13,14 +15,16 @@
 	SDL_Renderer* renderer;
 	PJApplicationDelegate* application;
 	bool stop;
-	uint16_t mouseX;
-	uint16_t mouseY;
+	int32_t mouseX;
+	int32_t mouseY;
+	uint32_t fps;
 }
-@property uint16_t mouseX;
-@property uint16_t mouseY;
+@property int32_t mouseX;
+@property int32_t mouseY;
 @property (readonly) OFThread* thread;
 @property (readonly) SDL_Renderer* renderer;
 + rendererForApplication: (PJApplicationDelegate*)app;
 - (void)renderLoop;
 - (void)stop;
+- (PJEntity*)getEntityUnderCursorFromCollection: (OFSortedList*)list needsToBeClickable: (bool)clickable;
 @end

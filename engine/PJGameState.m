@@ -1,7 +1,7 @@
 #import "PJGameState.h"
 
 @implementation PJGameState
-@synthesize entities, camera, backgroundColorR, backgroundColorG, backgroundColorB, space;
+@synthesize entities, camera, backgroundColorR, backgroundColorG, backgroundColorB, space, player;
 - init
 {
 	self = [super init];
@@ -10,27 +10,16 @@
 	backgroundColorR = 255;
 	backgroundColorG = 255;
 	backgroundColorB = 0;
-	timeStep = 1.0/60.0;
-
 	[self initPhysic];
-
-	/*[[OFThread threadWithThreadBlock: ^id() {
-		
-
-		while (true)
-		{
-			[self physicTick];
-			[self logicTick];
-			[OFThread sleepForTimeInterval: 0.1];
-		} 
-	}] start];*/
 
 	return self;
 }
 
-- (void)physicTick
+- (void)physicTickForTimeInterval: (double)time
 {
 	OFSortedList* _entities;
+
+	//of_log((OFConstantString*)[OFString stringWithFormat: @"%f", time]);
 
 	@synchronized(entities)
 	{
@@ -53,7 +42,7 @@
 		entity.y = (int)pos.y; //pos.y;
 	}
 
-	cpSpaceStep(space, timeStep);
+	cpSpaceStep(space, time);
 }
 
 - (void)initPhysic
@@ -73,7 +62,7 @@
 {
 }
 
-- (void)logicTick
+- (void)logicTickForTimeInterval: (double)time
 {
 	//of_log(@"no logic implemented");
 }
