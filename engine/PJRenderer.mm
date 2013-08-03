@@ -1,10 +1,9 @@
 #import "PJRenderer.h"
 
-//static const uint32_t fps = 40;
-//static const uint32_t minframetime = 1000 / fps;
+#define PJFORCEDFPS 60
 
 @implementation PJRenderer
-@synthesize renderer, mouseX, mouseY;
+@synthesize renderer, mouseX, mouseY, absoluteMouseX, absoluteMouseY;
 + rendererForApplication: (PJApplicationDelegate*)app
 {
 	PJRenderer* obj = [[self alloc] initWithApplication: app];
@@ -40,7 +39,7 @@
 
 - (void)updateWindowTitle
 {
-	OFString* str = [OFString stringWithFormat: @"%@ %d", PJGameName, fps];
+	OFString* str = [OFString stringWithFormat: @"%@ (fps: %d)", PJGameName, fps];
 	SDL_SetWindowTitle(window, [str UTF8String]);
 }
 
@@ -52,10 +51,9 @@
 	OFDate* secondStart = [OFDate date];
 
 	int32_t frameCount;
+
 	while(!stop)
 	{
-		OFDate* now = [OFDate date];
-
 		SDL_SetRenderDrawColor(renderer, 
 			application.state.backgroundColorR, 
 		    application.state.backgroundColorG, 
@@ -71,15 +69,19 @@
 			entities = [application.state.entities copy];	
 		}
 
-		[application.state physicTickForTimeInterval: 0.01];
-		[application.state logicTickForTimeInterval: 0.01];
+		float timeStep = (1.0/60.0);
+		[application.state physicTickForTimeInterval: timeStep];
+		[application.state logicTickForTimeInterval: timeStep];
 
 		SDL_Event e;
 
-		if (SDL_PollEvent(&e)) 
+		while(SDL_PollEvent(&e)) 
 		{
 			[application.eventHandler handleEvent: e];
 		}
+
+		mouseX = absoluteMouseX - application.state.camera.x;
+		mouseY = absoluteMouseY - application.state.camera.y;
 
 		for(PJEntity* entity in entities)
 		{
@@ -98,7 +100,6 @@
 			oldError = newError;
 		}
 
-		lastUpdate = [OFDate date];
 		frameCount++;
 
 		if ([[OFDate date] timeIntervalSinceDate: secondStart] >= 1.0)
@@ -108,6 +109,15 @@
 			[self updateWindowTitle];
 			secondStart = [OFDate date];
 		}
+
+		int diff = (int)([[OFDate date] timeIntervalSinceDate: lastUpdate] * 1000);
+
+		if (diff < 1000 / PJFORCEDFPS)
+		{
+			SDL_Delay((1000 / PJFORCEDFPS) - diff);
+		}
+
+		lastUpdate = [OFDate date];
 	}
 
 	SDL_DestroyRenderer(renderer);

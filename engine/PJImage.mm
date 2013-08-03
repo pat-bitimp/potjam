@@ -22,7 +22,7 @@
 	if (!isAnimation)
 	{
 		frames = 1;
-		textures = [self allocMemoryWithSize: sizeof(struct SDL_Texture*)];
+		textures = (SDL_Texture **)[self allocMemoryWithSize: sizeof(struct SDL_Texture*)];
 		textures[0] = IMG_LoadTexture(renderer, [[self pathForImageName: imageName] UTF8String]);
 	}
 	else
@@ -37,7 +37,7 @@
 			frames++;
 		}
 
-		textures = [self allocMemoryWithSize: sizeof(struct SDL_Texture*) count: frames];
+		textures = (SDL_Texture **)[self allocMemoryWithSize: sizeof(struct SDL_Texture*) count: frames];
 
 		for (int i = 0; i < frames; ++i)
 		{

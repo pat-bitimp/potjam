@@ -81,10 +81,17 @@
 	if (_x == x)
 		return;
 
+	of_log((OFConstantString*)[OFString stringWithFormat: @"setX: %d", PJPXMRatio * _x]);
+
 	x = _x;
 
 	if (body != NULL)
-		cpBodySetPos(body, cpv(x, y));
+	{
+		if (PJPXMRatio * _x != body->GetTransform().p.x)
+		{
+			body->SetTransform(b2Vec2(PJPXMRatio * x, PJPXMRatio*y), body->GetAngle());
+		}
+	}
 }
 
 - (void)setY: (int32_t)_y
@@ -95,7 +102,12 @@
 	y = _y;
 
 	if (body != NULL)
-		cpBodySetPos(body, cpv(x, y));
+	{
+		if (PJPXMRatio * _y != body->GetTransform().p.y)
+		{
+			body->SetTransform(b2Vec2(PJPXMRatio * x, PJPXMRatio*y), body->GetAngle());
+		}
+	}
 }
 
 @end

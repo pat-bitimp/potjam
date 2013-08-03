@@ -1,7 +1,7 @@
 #import "PJGameState.h"
 
 @implementation PJGameState
-@synthesize entities, camera, backgroundColorR, backgroundColorG, backgroundColorB, space, player;
+@synthesize entities, camera, backgroundColorR, backgroundColorG, backgroundColorB, player, physicWorld;
 - init
 {
 	self = [super init];
@@ -30,28 +30,27 @@
 	{
 		if (entity.body == NULL)
 		{
-			//of_log(@"null physic body entity: %@!", entity.description);
 			continue;
 		}
 
-		cpVect pos = cpBodyGetPos(entity.body);
+		b2Transform transform = entity.body->GetTransform();
 
-		//of_log((OFConstantString*)[OFString stringWithFormat: @"nx: %f ny: %f ox: %d oy: %d"], pos.x, pos.y, entity.x, entity.y);
-
-		entity.x = (int)pos.x; //pos.x;
-		entity.y = (int)pos.y; //pos.y;
+		entity.angle = transform.q.GetAngle() * M_PI/180;
+		entity.x = (int)(PJMPXRatio * transform.p.x);
+		entity.y = (int)(PJMPXRatio * transform.p.y);
 	}
 
-	cpSpaceStep(space, time);
+	physicWorld->Step(time, 8, 3);
 }
 
 - (void)initPhysic
 {
-	cpVect gravity = cpv(0, 10);
+	// Define the gravity vector.
+    b2Vec2 gravity(0.0f, -10.0f);
 
-	// Create an empty space.
-	space = cpSpaceNew();
-	cpSpaceSetGravity(space, gravity);
+    // Construct a world object, which will hold and simulate the rigid bodies.
+    physicWorld = new b2World(gravity);
+    physicWorld->SetAllowSleeping(true);
 }
 
 - (void)onMouseButtonDown
@@ -69,9 +68,6 @@
 
 - (void)dealloc
 {
-	// Clean up our objects and exit!
-	// cpShapeFree(ballShape);
-	// cpBodyFree(ballBody);
-	// cpSpaceFree(space);
+	delete physicWorld;
 }
 @end

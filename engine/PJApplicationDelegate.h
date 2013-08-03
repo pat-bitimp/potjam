@@ -2,10 +2,6 @@
 #import "PJRenderer.h"
 #import "PJGameState.h"
 #import "PJEventHandler.h"
-#define CP_USE_CGPOINTS 0
-#import <chipmunk/chipmunk.h>
-
-Class defaultGameState;
 
 @class PJRenderer;
 @class PJGameState;

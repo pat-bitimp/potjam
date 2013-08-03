@@ -33,13 +33,14 @@
 				[application.renderer stop];
 	else if (e.type == SDL_MOUSEMOTION)
 	{
-		application.renderer.mouseX = e.motion.x - application.state.camera.x;
-		application.renderer.mouseY = e.motion.y - application.state.camera.y;
+		application.renderer.absoluteMouseX = e.motion.x;
+		application.renderer.absoluteMouseY = e.motion.y;
+		
 	}
 	else if (e.type == SDL_MOUSEBUTTONDOWN)
 	{
-		application.renderer.mouseX = e.motion.x - application.state.camera.x;
-		application.renderer.mouseY = e.motion.y - application.state.camera.y;
+		application.renderer.absoluteMouseX = e.motion.x;
+		application.renderer.absoluteMouseY = e.motion.y;
 
 		PJEntity* ent = [application.renderer getEntityUnderCursorFromCollection: entities needsToBeClickable: true];
 
@@ -50,8 +51,8 @@
 	}
 	else if (e.type == SDL_MOUSEBUTTONUP)
 	{
-		application.renderer.mouseX = e.motion.x - application.state.camera.x;
-		application.renderer.mouseY = e.motion.y - application.state.camera.y;
+		application.renderer.absoluteMouseX = e.motion.x;
+		application.renderer.absoluteMouseY = e.motion.y;
 
 		PJEntity* ent = [application.renderer getEntityUnderCursorFromCollection: entities needsToBeClickable: true];
 
@@ -84,12 +85,12 @@
 
 - (void)registerKeyDownBlock: (void (^)(void))block forKeyCode: (int)keyCode
 {
-	[keyDownMapping setObject: block forKey: [OFNumber numberWithInt: keyCode]];
+	keyDownMapping[@(keyCode)] = block;
 }
 
 - (void)registerKeyUpBlock: (void (^)(void))block forKeyCode: (int)keyCode
 {
-	[keyUpMapping setObject: block forKey: [OFNumber numberWithInt: keyCode]];
+	keyUpMapping[@(keyCode)] = block;
 }
 
 @end

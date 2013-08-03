@@ -22,25 +22,30 @@
 	frame = 0;
 	isClickable = true;
 
-	cpFloat radius = width/2;
-	cpFloat mass = 1;
+	// Define the dynamic body. We set its position and call the body factory.
+    b2BodyDef bodyDef;
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position.Set(PJPXMRatio * x, PJPXMRatio * y);
+    body = state.physicWorld->CreateBody(&bodyDef);
 
-	// The moment of inertia is like mass for rotation
-	// Use the cpMomentFor*() functions to help you approximate it.
-	cpFloat moment = INFINITY; // cpMomentForCircle(mass, 0, radius, cpvzero);
+    of_log((OFConstantString*)[OFString stringWithFormat: @"playerX: %f playerY: %f", PJPXMRatio * x, PJPXMRatio * y]);
 
-	// The cpSpaceAdd*() functions return the thing that you are adding.
-	// It's convenient to create and add an object in one line.
-	cpBody *ballBody = cpSpaceAddBody(gameState.space, cpBodyNew(mass, moment));
-	cpBodySetPos(ballBody, cpv(x, y));
+    // Define another box shape for our dynamic body.
+    b2CircleShape dynamicCircle;
+	dynamicCircle.m_radius = PJPXMRatio * (_width/2);
 
-	// Now we create the collision shape for the ball.
-	// You can create multiple collision shapes that point to the same body.
-	// They will all be attached to the body and move around to follow it.
-	cpShape *ballShape = cpSpaceAddShape(gameState.space, cpCircleShapeNew(ballBody, radius, cpvzero));
-	ballShape->u = 1.0f;
+    // Define the dynamic body fixture.
+    b2FixtureDef fixtureDef;
+    fixtureDef.shape = &dynamicCircle;
 
-	body = ballBody;
+    // Set the box density to be non-zero, so it will be dynamic.
+    fixtureDef.density = 1.0f;
+
+    // Override the default friction.
+    fixtureDef.friction = 0.3f;
+
+    // Add the shape to the body.
+    body->CreateFixture(&fixtureDef);
 
 	return self;
 }

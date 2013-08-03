@@ -1,4 +1,5 @@
 #import "PJApplicationDelegate.h"
+#import "Box2D/Box2D.h"
 
 @implementation PJApplicationDelegate
 @synthesize renderer, state, resolutionX, resolutionY, isFullscreen, eventHandler;
@@ -8,13 +9,13 @@
 	resolutionY = 600;
 	isFullscreen = false;
 
-	cpInitChipmunk();
+	//cpInitChipmunk();
 
 	eventHandler = [PJEventHandler eventHandler];
 
 	renderer = [PJRenderer rendererForApplication: self];
 
-	state = [defaultGameState new];
+	state = [objc_getClass([PJDefaultGameStateName UTF8String]) new];
 
 	[renderer renderLoop];
 

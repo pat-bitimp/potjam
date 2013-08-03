@@ -1,9 +1,7 @@
 #import <ObjFW/ObjFW.h>
 #import <SDL2/SDL_image.h>
+#import <Box2D/Box2D.h>
 #import "PJImage.h"
-
-#define CP_USE_CGPOINTS 0
-#import <chipmunk/chipmunk.h>
 #import "PJGameState.h"
 
 @class PJImage;
@@ -25,7 +23,7 @@ typedef enum {
 	int8_t frame;
 	PJImage* image;
 	PJShape shape;
-	cpBody* body;
+	b2Body* body;
 	bool isClickable;
 	PJGameState* gameState;
 }
@@ -38,7 +36,7 @@ typedef enum {
 @property int8_t frame;
 @property bool isClickable;
 @property PJShape shape;
-@property cpBody* body;
+@property b2Body* body;
 @property (strong) PJGameState* gameState;
 @property (strong) PJImage* image;
 - (void)preRender;

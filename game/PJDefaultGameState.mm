@@ -9,12 +9,12 @@
 		(PJApplicationDelegate*)[[OFApplication sharedApplication] delegate];
 
 	[application.eventHandler registerKeyDownBlock: ^{ 
-		cpBodyApplyImpulse(application.state.player.body, cpv(-1,0), cpv(0,0)); 
+		//cpBodyApplyImpulse(application.state.player.body, cpv(-100,0), cpv(0,0)); 
 	} 
 	                                    forKeyCode: SDLK_a];
 
 	[application.eventHandler registerKeyDownBlock: ^{
-		cpBodyApplyImpulse(application.state.player.body, cpv(1,0), cpv(0,0));
+		//cpBodyApplyImpulse(application.state.player.body, cpv(100,0), cpv(0,0));
 	} 
 	                                    forKeyCode: SDLK_d];
 
@@ -47,16 +47,20 @@
 	                               rotation: 0];
 	[entities insertObject: block];
 
-	return self;
-}
+	PJBlockEntity* block2 = 
+		[PJBlockEntity entityWithGameState: self
+				                          x: 300
+				                          y: 600
+				                          z: 50
+			                          width: 256
+	                                 height: 32
+	                               rotation: 0];
+	[entities insertObject: block2];
 
-+ (void)load
-{
-	defaultGameState = [self class];
+	return self;
 }
 
 - (void)logicTickForTimeInterval: (double)time
 {
-	//of_log(@"logic step");
 }
 @end

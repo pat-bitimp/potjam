@@ -17,10 +17,14 @@
 	bool stop;
 	int32_t mouseX;
 	int32_t mouseY;
+	int32_t absoluteMouseX;
+	int32_t absoluteMouseY;
 	uint32_t fps;
 }
 @property int32_t mouseX;
 @property int32_t mouseY;
+@property int32_t absoluteMouseX;
+@property int32_t absoluteMouseY;
 @property (readonly) OFThread* thread;
 @property (readonly) SDL_Renderer* renderer;
 + rendererForApplication: (PJApplicationDelegate*)app;
